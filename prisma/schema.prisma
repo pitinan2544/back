@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  username   String       @unique @db.VarChar(30)
+  password   String       @db.VarChar(72)
+  Address    String       @db.VarChar(72)
+  Phone      String       @db.VarChar(10)
+  idCard     String       @db.VarChar(13)
+  RecordList RecordList[]
+}
+
+model Member {
+  id         Int      @id @default(autoincrement())
+  memberName String   @unique @db.VarChar(30)
+  address    String   @db.VarChar(72)
+  phone      String   @db.VarChar(10)
+  birthday   String   @db.VarChar(72)
+  idCard     String   @db.VarChar(13)
+  loan       Int
+  deposit    Int
+
+  RecordList RecordList[]
+}
+
+model RecordList {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  memberId Int
+  member   Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  date     DateTime @default(now()) @map("date") @db.Timestamp(0)
+  loan     Int
+  deposit  Int
+}
+
+model Bank {
+  id      Int @id @default(autoincrement())
+  loan    Int
+  deposit Int
+}
